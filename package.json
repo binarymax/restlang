@@ -1,6 +1,6 @@
 {
   "name": "restlang",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A parser for a DSL for describing REST resources",
   "main": "restlang.js",
   "directories": {
@@ -9,9 +9,9 @@
   "scripts": {
     "test": "mocha test.js"
   },
-   "dependencies": {
+  "dependencies": {
     "commander": "2.2.x"
-  },  
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/binarymax/restlang.git"
