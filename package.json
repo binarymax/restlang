@@ -1,0 +1,28 @@
+{
+  "name": "restlang",
+  "version": "0.0.0",
+  "description": "A parser for a DSL for describing REST resources",
+  "main": "restlang.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "mocha test.js"
+  },
+   "dependencies": {
+    "commander": "2.2.x"
+  },  
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/binarymax/restlang.git"
+  },
+  "keywords": [
+    "DSL",
+    "REST",
+    "API",
+    "markdown",
+    "parser"
+  ],
+  "author": "Max Irwin",
+  "license": "MIT"
+}
