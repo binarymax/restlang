@@ -10,7 +10,11 @@
     "test": "mocha test.js"
   },
   "dependencies": {
-    "commander": "2.2.x"
+    "commander": "2.2.x",
+    "pretty-stringify": "0.1.x"
+  },
+  "devDependencies": {
+    "should": "3.3.x"
   },
   "repository": {
     "type": "git",

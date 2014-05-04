@@ -1,11 +1,15 @@
-//Module dependencies
-var command = require('commander');
-var restlang = require('./parser');
+// Module dependencies
 var fs = require('fs');
+var command = require('commander');
+var pretty = require('pretty-stringify');
+var restlang = require('./parser');
 
-//Read in the package.json file:
+// --------------------------------------------------------------------------
+// Read in the package.json file:
 var package = JSON.parse(fs.readFileSync(__dirname + "/package.json"));
 
+// --------------------------------------------------------------------------
+// Initialize cli
 command
 	.version(package.version)
 	.option('-i, --source <source>','The input file.')
@@ -15,25 +19,34 @@ command
 if (!command.source) command.help();
 
 // --------------------------------------------------------------------------
-
+// Run the parser and output the result
 var parse = function(source) {
 
 	var api = restlang(source);
 
+	var out = pretty(api);
+
 	if (command.target) {
-		fs.writeFileSync(command.target,api,'utf8');
+		//Output to file
+		fs.writeFile(command.target,out,'utf8',function(err){
+			if(err) console.error(err);
+			process.exit();
+		});
 	} else {
-		console.log(JSON.stringify(api));
+		//Output to stdout
+		console.log(out);
+		process.exit();
 	}
 
 };
 
-
+// --------------------------------------------------------------------------
+// Read in the file and parse
 try{
 
 	fs.readFile(command.source,'utf8',function(err,source){
 		if(err) {
-			console.log(err);
+			console.error(err);
 			process.exit();
 		}
 		parse(source);
