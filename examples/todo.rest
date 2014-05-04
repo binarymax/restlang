@@ -1,8 +1,8 @@
 /todo: A Todo list CRUD API
 
-@Entry: Gets a specific To-Do Item
+#Entry: Gets a specific To-Do Item
 
-	Calls ../controllers/todo.Entry
+	{../controllers/todo:Entry}
 
 	:id int64 required: The ID of the item entry to retrieve
 
@@ -12,9 +12,9 @@
 	|createdate datetime: The date the item was entered into the system
 	|isdeleted boolean: True if the item has been removed from the list
 
-@Collection: Gets a list of Todo Items for a List
+#Collection: Gets a list of Todo Items for a List
 
-	Calls ../controllers/todo.Collection
+	{../controllers/todo:Collection}
 
 	?isdone boolean: If true, only return done items, if false only return not done items
 	?all boolean: if true, return all items, done or not
@@ -25,40 +25,41 @@
 	|createdate datetime: The date the item was entered into the system
 	|isdeleted boolean: True if the item has been removed from the list
 
-@Add: Adds a new Todo Item to a List
+#Add: Adds a new Todo Item to a List
 
-	Calls ../controllers/todo.Add
+	{../controllers/todo:Add}
 
-	-description string required: The textual description of the item
-	-donedate datetime: The date/time when the item was marked as done, null otherwise
-	-createdate datetime: The date the item was entered into the system
-	-redirect string: Redirect to this URL after Add
+	@description string required: The textual description of the item
+	@donedate datetime: The date/time when the item was marked as done, null otherwise
+	@createdate datetime: The date the item was entered into the system
+	@redirect string: Redirect to this URL after Add
 	
 	|id int64: The ID of the newly added item
 	|description string: The textual description of the item
 	|donedate datetime: The date/time when the item was marked as done, null otherwise
 	|createdate datetime: The date the item was entered into the system
 
-@Save: Saves a specific Todo Item
+#Save: Saves a specific Todo Item
 
-	Calls ../controllers/todo.Save
+	{../controllers/todo:Save}
 
 	:id int64 required: The ID of the item entry to save
 
-	-description string: The textual description of the item
-	-donedate datetime: The date/time when the item was marked as done, null otherwise
-	-createdate datetime: The date the item was entered into the system
-	-redirect string: Redirect to this URL after Save				
+	@description string: The textual description of the item
+	@donedate datetime: The date/time when the item was marked as done, null otherwise
+	@createdate datetime: The date the item was entered into the system
+	@redirect string: Redirect to this URL after Save				
 
 	|id int64: The ID of the saved Todo item
 	|description string: The textual description of the item
 	|donedate datetime: The date/time when the item was marked as done, null otherwise
 	|createdate datetime: The date the item was entered into the system
 
-@Remove: Marks a specific Todo Item as deleted
+#Remove: Marks a specific Todo Item as deleted
 
-	Calls ../controllers/todo.Remove
+	{../controllers/todo:Remove}
 
 	:id int64 required: The ID of the item entry to remove
 
 	|affectedRows: int32: The number of records effected by the removal
+
