@@ -1,5 +1,7 @@
 /todo: A Todo list CRUD API
 
+.identity id int64
+
 #Entry: Gets a specific To-Do Item
 
 	{../controllers/todo:Entry}
