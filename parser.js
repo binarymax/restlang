@@ -50,8 +50,17 @@ var restlang = (function() {
 
 		//Pops the stack until it reaches an object of the specified type
 		var popto = function(type,errormessage){
-			while(stack.length && stack[0].type!==type) stack.shift();
-			if  (!stack.length) error(errormessage);			
+			if (type instanceof Array) {
+				//get the first in the type list
+				while(stack.length && type.indexOf(stack[0].type)===-1) stack.shift();			
+			} else {
+				//match the type string
+				while(stack.length && stack[0].type!==type) stack.shift();
+			}
+			if  (!stack.length) {
+				if(errormessage) error(errormessage);
+				else return null;
+			}
 			return stack[0].obj;
 		};
 
@@ -74,6 +83,58 @@ var restlang = (function() {
 
 			stack.unshift({type:'method',obj:obj});
 		};
+
+		var identity = function(tokens){
+			var curr = popto(['method','resource'],"The command '"+line+"' does not apply to a method or resource.");
+			curr.identity = curr.identity||[];
+			var id = { name:tokens.shift().toLowerCase() };
+			curr.identity.push(id);
+			return id;
+		};
+
+		var parent = function(tokens) {
+			var curr = popto('method');
+			curr = curr||popto('resource',"The command '"+line+"' does not apply to a method or resource.");
+			if(tokens.length===0) error("A parent resource is missing for '"+line+"'");
+			if(tokens.length===1) error("A parent id is missing for '"+tokens[0]+"'");
+			curr.parent = curr.parent||[];
+			var rsrc = tokens.shift().toLowerCase();
+			var name = tokens.shift().toLowerCase();
+			var prnt = { resource: rsrc, name: name };
+			curr.parent.push(prnt);
+			return prnt;
+		};
+
+		var mutable = function(tokens) {
+			var curr = popto('method');
+			curr = curr||popto('resource',"The command '"+line+"' does not apply to a method or resource.");
+			curr.mutable = {unsafe:true};
+			return curr.mutable;
+		};
+
+		var authentication = function(tokens){
+			var curr = popto('method');
+			curr = curr||popto('resource',"The command '"+line+"' does not apply to a method or resource.");
+			if(tokens.length===0) error("An authentication level is missing for '"+line+"'");
+			var level = tokens.shift();
+			curr.authentication = {level:level};
+			return curr.authentication;
+		};
+
+		//Adds a new method or resource property
+		var property = function(tokens) {
+			var keyword = tokens.shift().toLowerCase();
+			var obj = null;
+			switch (keyword) {
+				case 'identity': obj = identity(tokens); break;
+				case 'parent': obj = parent(tokens); break;
+				case 'mutable': obj = mutable(tokens); break;
+				case 'authentication': obj = authentication(tokens); break;
+				default: error("The keyword '"+keyword+"' was not recognised."); break;
+			}
+			if(obj) stack.unshift({type:'property',obj:obj});
+
+		}
 
 		//Adds an external command reference
 		var command = function(line) {
@@ -133,6 +194,7 @@ var restlang = (function() {
 				case '@': body(tokens); break;
 				case '$': file(tokens); break;
 				case '{': command(line); break;
+				case '.': property(tokens); break;
 				case '|': response(tokens); break;
 				default: description(line); break;
 			}

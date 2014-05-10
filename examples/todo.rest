@@ -29,6 +29,8 @@
 
 #Add: Adds a new Todo Item to a List
 
+	.mutable
+
 	{../controllers/todo:Add}
 
 	@description string required: The textual description of the item
@@ -42,6 +44,8 @@
 	|createdate datetime: The date the item was entered into the system
 
 #Save: Saves a specific Todo Item
+
+	.mutable
 
 	{../controllers/todo:Save}
 
@@ -58,6 +62,8 @@
 	|createdate datetime: The date the item was entered into the system
 
 #Remove: Marks a specific Todo Item as deleted
+
+	.mutable
 
 	{../controllers/todo:Remove}
 
