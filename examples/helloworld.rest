@@ -1,0 +1,11 @@
+/helloworld
+
+This API returns a 'Hello World' message!
+
+There is only one method: GET.  Any other method wont get a response.
+
+	#Get
+
+		This method returns 'Hello World'.
+
+		|text string:The text that holds the message
