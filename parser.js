@@ -84,14 +84,19 @@ var restlang = (function() {
 			stack.unshift({type:'method',obj:obj});
 		};
 
+		//Identity property, acts as a 'Primary Key' of an entry
 		var identity = function(tokens){
 			var curr = popto(['method','resource'],"The command '"+line+"' does not apply to a method or resource.");
 			curr.identity = curr.identity||[];
 			var id = { name:tokens.shift().toLowerCase() };
 			curr.identity.push(id);
+
+			if(tokens.length) id.description = tokens.join(' ');
+
 			return id;
 		};
 
+		//Parent property, acts as a 'Foreign key' of an entry
 		var parent = function(tokens) {
 			var curr = popto('method');
 			curr = curr||popto('resource',"The command '"+line+"' does not apply to a method or resource.");
@@ -102,22 +107,29 @@ var restlang = (function() {
 			var name = tokens.shift().toLowerCase();
 			var prnt = { resource: rsrc, name: name };
 			curr.parent.push(prnt);
+
+			if(tokens.length) prnt.description = tokens.join(' ');
+
 			return prnt;
 		};
 
+		//Mutable property, marks that the entity state will change when method is called
 		var mutable = function(tokens) {
 			var curr = popto('method');
 			curr = curr||popto('resource',"The command '"+line+"' does not apply to a method or resource.");
-			curr.mutable = {unsafe:true};
+			curr.mutable = {ismutable:true};
+			if(tokens.length) curr.mutable.description = tokens.join(' ');			
 			return curr.mutable;
 		};
 
+		//Authentication property, denotes security access level required for the method
 		var authentication = function(tokens){
 			var curr = popto('method');
 			curr = curr||popto('resource',"The command '"+line+"' does not apply to a method or resource.");
 			if(tokens.length===0) error("An authentication level is missing for '"+line+"'");
 			var level = tokens.shift();
 			curr.authentication = {level:level};
+			if(tokens.length) curr.authentication.description = tokens.join(' ');			
 			return curr.authentication;
 		};
 

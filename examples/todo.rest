@@ -14,7 +14,7 @@
 	|createdate datetime: The date the item was entered into the system
 	|isdeleted boolean: True if the item has been removed from the list
 
-#Collection: Gets a list of Todo Items for a List
+#Collection: Gets a list of Todo Items
 
 	{../controllers/todo:Collection}
 
@@ -27,7 +27,7 @@
 	|createdate datetime: The date the item was entered into the system
 	|isdeleted boolean: True if the item has been removed from the list
 
-#Add: Adds a new Todo Item to a List
+#Add: Adds a new Todo Item to the List
 
 	.mutable
 
@@ -36,7 +36,6 @@
 	@description string required: The textual description of the item
 	@donedate datetime: The date/time when the item was marked as done, null otherwise
 	@createdate datetime: The date the item was entered into the system
-	@redirect string: Redirect to this URL after Add
 	
 	|id int64: The ID of the newly added item
 	|description string: The textual description of the item
@@ -54,7 +53,6 @@
 	@description string: The textual description of the item
 	@donedate datetime: The date/time when the item was marked as done, null otherwise
 	@createdate datetime: The date the item was entered into the system
-	@redirect string: Redirect to this URL after Save				
 
 	|id int64: The ID of the saved Todo item
 	|description string: The textual description of the item
