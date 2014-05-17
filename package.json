@@ -1,6 +1,6 @@
 {
   "name": "restlang",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "A parser for a DSL for describing REST resources",
   "main": "restlang.js",
   "directories": {
