@@ -2,21 +2,79 @@
 
 A cross-compiling DSL (domain specific language) for building APIs
 
+## Hello World
+
+```restlang
+/helloworld
+
+This API returns a 'Hello World' message!
+
+#Get
+
+	{/controllers/helloworld.Get}
+
+	|message string: The text that holds the message
+	
+```
+
+
 ## Introduction
 
 Restlang is a markdown-inspired language that is used to generate server route specifications, client libraries, testing scripts, and developer documentation for web based APIs.
 
-For example, you can easily define a ToDo list API resource with 50 lines of restlang, and then automatically generate all of the following:
+Restlang defines the 'What', and not the 'How' of APIs. 
+
+For example, you can easily define a Todo list API resource with 50 lines of restlang, and then automatically generate all of the following:
 - The API routes for Node/Express 
 - A jQuery AJAX library to consume the above API
 - Integration test scrips for mocha
 - Static HTML documentation files
 
-## Example
+The main idea being when an end language target is written, then the end language target works for all APIs defined with Restlang.  Similar to how a markdown parser can target HTML or PDF - once the target is defined it works for all text written in markdown.
+
+As of writing, only one parser exists and is in development.  This repository holds the restlang.js parser for Node and JavaScript.
+
+### Targets
+
+A Target is an end result output of the Restlang parser coupled with a generator.  Currently only one target generator is supported through Edda [1].
+
+#### _Framework targets_
+
+Currently, only node is supported as a target through Heimdall[2].  Though Heimdall is semi-mature and in production use, support for Restlang->Heimdall is experimental.
+
+Future server framework targets in planning are:
+- Golang
+- PHP
+- Openresty
+- MVC.NET
+
+#### _Client targets_
+
+A nice side effect of having a full parseable API definition, is that client libraries can be generated.  For now, a tool called Bifrost [3] is in development to generate such frameworks, but is not yet ready.
+
+Future client targets in planning are:
+- iOs
+- Android
+- jQuery
+- Node
+- Golang
+- .NET
+
+#### _Testing targets_
+
+Automation of Integration Testing is a key goal of Restlang.  Currently only node/mocha is being developed.  See Ragnarok for more information [4]. 
+
+Aside from Ragnarok there are no other Testing targets planned.
+
+#### _Documentation for Humans target_
+
+Though  mostly human readable in its raw form (again like markdown), a developer documentation target is in the works to generate static documentation HTML.
+
+## Todo Example
 
 Here is an example of a Todo list API in Restlang:
 
-```
+```restlang
 /todo: A Todo list CRUD API
 
 .identity id int64
@@ -223,6 +281,11 @@ It is possible to extend the type system and define new datatypes to use in the 
 _coming soon_  
 
 ## Notes
+
+ - [1] Edda can be found at https://github.com/binarymax/edda
+ - [2] Heimdall can be found at https://github.com/binarymax/heimdall
+ - [3] Bifrost can be found at https://github.com/binarymax/bifrost
+ - [4] Ragnarok can be found at https://github.com/binarymax/ragnarok
 
 Restlang is released under the MIT license.
 Copyright Max Irwin, 2014
