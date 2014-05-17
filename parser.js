@@ -177,6 +177,7 @@ var restlang = (function() {
 					line = trim(line.substr(idx).replace(/^\s*:/,''));
 					tokens.description = line;
 				} else {
+					console.log(line);
 					tokens = {type:'description',name:line};
 				}
 				return tokens;
@@ -230,6 +231,7 @@ var restlang = (function() {
 		//Adds a new API resource
 		var resource = function(tokens) {
 			var obj = {name:tokens.name,resource:{}};
+			if(tokens.description) obj.description = tokens.description;
 			api.push(obj);
 			stack = [{type:'resource',obj:obj}];
 		};
@@ -316,7 +318,7 @@ var restlang = (function() {
 		//Adds description text to current stack object
 		var description = function(tokens) {
 			var curr = stack[0].obj;
-			curr.description = curr.description ? (curr.description+' '+tokens.description) : tokens.description;
+			curr.description = curr.description ? (curr.description+' '+tokens.name) : tokens.name;
 		};
 
 		//Composes a function to add a type of method request or response parameter
@@ -366,6 +368,7 @@ var restlang = (function() {
 				case 'command': command(tokens); break;
 				case 'property': property(tokens); break;
 				case 'response': response(tokens); break;
+				case 'description': description(tokens); break;
 				default: description(tokens); break;
 			}
 
