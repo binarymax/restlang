@@ -382,5 +382,10 @@ var restlang = (function() {
 
 })();
 
-//TODO - make this node agnostic
-module.exports = restlang;
+if(typeof module !== "undefined" && module.exports) {
+  //Node
+  module.exports = restlang;
+} else if (typeof window!=="undefined") {
+  //Browser
+  window.restlang = restlang;
+}
