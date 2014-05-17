@@ -67,5 +67,5 @@
 
 	:id int64 required: The ID of the item entry to remove
 
-	|affectedRows: int32: The number of records effected by the removal
+	|affectedRows int32: The number of records effected by the removal
 
