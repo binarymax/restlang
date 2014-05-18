@@ -1,7 +1,6 @@
 // Module dependencies
 var fs = require('fs');
 var command = require('commander');
-var pretty = require('pretty-stringify');
 var restlang = require('./parser');
 
 // --------------------------------------------------------------------------
@@ -14,9 +13,16 @@ command
 	.version(package.version)
 	.option('-i, --source <source>','The input file.')
 	.option('-o, --target [target]','The output file. If missing, prints to stdout')
+	.option('-p, --pretty','Pretty-print the JSON output')
 	.parse(process.argv);
 
 if (!command.source) command.help();
+
+// --------------------------------------------------------------------------
+// Pretty-print JSON
+var pretty = function(obj) {
+	return JSON.stringify(obj,undefined,2);
+};
 
 // --------------------------------------------------------------------------
 // Run the parser and output the result
@@ -24,7 +30,7 @@ var parse = function(source) {
 
 	var api = restlang(source);
 
-	var out = pretty(api);
+	var out = command.pretty?pretty(api):JSON.stringify(api);
 
 	if (command.target) {
 		//Output to file
