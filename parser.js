@@ -9,28 +9,28 @@ var restlang = (function() {
 "use strict";
 
 	var datatypes = [
- 		'binary',
- 		'boolean',
- 		'byte',
- 		'datetime',
- 		'decimal',
- 		'double',
- 		'single',
- 		'float',
- 		'guid',
- 		'int16',
- 		'int32',
- 		'int64',
- 		'int',
- 		'number',
- 		'sbyte',
- 		'string',
- 		'text',
- 		'date',
- 		'time',
- 		'datetimeoffset',
- 		'object',
- 		'array'
+		'binary',
+		'boolean',
+		'byte',
+		'datetime',
+		'decimal',
+		'double',
+		'single',
+		'float',
+		'guid',
+		'int16',
+		'int32',
+		'int64',
+		'int',
+		'number',
+		'sbyte',
+		'string',
+		'text',
+		'date',
+		'time',
+		'datetimeoffset',
+		'object',
+		'array'
 	];
 
 	var rxStringN = /string(\d)+/i;
@@ -143,7 +143,6 @@ var restlang = (function() {
 		var space = false;
 		var datatype = '';
 		var token = '';
-		var keyword = null;
 		var setting = null;
 		var setable = null;
 		while (!done) {
@@ -169,9 +168,9 @@ var restlang = (function() {
 					tokens.name = token;
 					named = true;
 
-				} else if (keyword  = keywords[token]) {
+				} else if (keywords[token]) {
 					//Token is a keyword
-					if(keyword.indexOf(tokens.type)>-1) {
+					if(keywords[token].indexOf(tokens.type)>-1) {
 						tokens[token] = true;
 					} else {
 						tokens.error = "The keyword '"+token+"' cannot apply to a " + tokens.type;
@@ -337,7 +336,7 @@ var restlang = (function() {
 			}
 			if(obj) stack.unshift({type:'property',obj:obj});
 
-		}
+		};
 
 		//Adds an external command reference
 		var command = function(tokens) {
@@ -375,8 +374,8 @@ var restlang = (function() {
 				obj.type = tokens.datatype;
 				if(tokens.require) obj.required = true;
 				if(tokens.description) obj.description = tokens.description;
-			}
-		}
+			};
+		};
 
 		//Declare method request parameter functions
 		var param = parameter('params',"The route parameter '%s' does not apply to a method.");
