@@ -1,7 +1,7 @@
 {
   "name": "restlang",
   "version": "0.2.8",
-  "description": "A parser for a DSL for describing REST resources",
+  "description": "A markdown inspired language to describe web APIs",
   "main": "restlang.js",
   "directories": {
     "example": "examples"
