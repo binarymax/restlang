@@ -254,7 +254,7 @@ var restlang = (function() {
 				//match the type string
 				while(stack.length && stack[0].type!==type) stack.shift();
 			}
-			if  (!stack.length) {
+			if (!stack.length) {
 				if(errormessage) error(errormessage);
 				else return null;
 			}
@@ -265,7 +265,7 @@ var restlang = (function() {
 
 		//Adds a new API resource
 		var resource = specifiers.resource = function(tokens) {
-			var obj = {name:tokens.name,resource:{}};
+			var obj = {name:tokens.name,type:'resource',resource:{path:'/'+tokens.name}};
 			if(tokens.description) obj.description = tokens.description;
 			api.push(obj);
 			stack = [{type:'resource',obj:obj}];
@@ -273,7 +273,7 @@ var restlang = (function() {
 
 		//Adds a new Websocket API Receiver
 		var receiver = specifiers.receiver = function(tokens) {
-			var obj = {name:tokens.name,receiver:{}};
+			var obj = {name:tokens.name,type:'receiver',receiver:{}};
 			if(tokens.description) obj.description = tokens.description;
 			api.push(obj);
 			stack = [{type:'receiver',obj:obj}];
@@ -281,7 +281,7 @@ var restlang = (function() {
 
 		//Adds a new Websocket API Emitter
 		var emitter = specifiers.emitter = function(tokens) {
-			var obj = {name:tokens.name,emitter:{}};
+			var obj = {name:tokens.name,type:'emitter',emitter:{}};
 			if(tokens.description) obj.description = tokens.description;
 			api.push(obj);
 			stack = [{type:'emitter',obj:obj}];
@@ -293,7 +293,8 @@ var restlang = (function() {
 			var name = tokens.name;
 			var obj = curr.resource[name];
 			if(!obj) obj = curr.resource[name] = {};
-			obj.name = name;
+			obj.name  = name;
+			obj.path = curr.resource.path;
 			if(tokens.description) obj.description = tokens.description;
 
 			stack.unshift({type:'method',obj:obj});
@@ -386,6 +387,8 @@ var restlang = (function() {
 					curr = popto(key,errormessage.replace('%s',tokens.name));
 				} else {
 					curr = popto(parents,errormessage.replace('%s',tokens.name));
+					if (curr.emitter) curr = curr.emitter;
+					if (curr.receiver) curr = curr.receiver;
 				}
 
 				curr[key] = curr[key]||{};
@@ -397,6 +400,9 @@ var restlang = (function() {
 				obj.type = tokens.datatype;
 				if(tokens.require) obj.required = true;
 				if(tokens.description) obj.description = tokens.description;
+
+				//Method Params Only:
+				if(curr.path && key==='params') curr.path += '/:'+name;
 			};
 		};
 
@@ -426,6 +432,9 @@ var restlang = (function() {
 			}
 
 		}
+
+		//Final pass checks if everything is OK
+		//TODO
 
 		return api;
 
