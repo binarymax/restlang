@@ -22,7 +22,7 @@ This API returns a 'Hello World' message!
 
 Restlang is a markdown-inspired language that is used to generate server route specifications, client libraries, testing scripts, and developer documentation for web based APIs.
 
-Restlang defines the 'What', and not the 'How' of APIs. 
+Restlang defines the 'What' and not the 'How' of APIs. 
 
 For example, you can easily define a Todo list API resource with 50 lines of restlang, and then automatically generate all of the following:
 - The API routes for Node/Express 
@@ -144,6 +144,22 @@ Here is an example of a Todo list API in Restlang:
 
 ```
 
+## Websockets
+
+Restlang also supports websocket receiver and emitter definitions.  Here is an example of a chat websocket API:
+
+```
+>chat
+	This websocket method accepts a chat message from the client.
+
+	@message string:The text that holds the chat message
+
+<chat
+	This websocket method broadcasts a chat message to the client.
+
+	|message string:The text that holds the chat message
+```
+
 ## Documentation
 
 Writing restlang is easy, but it assumes you have at least a basic understanding of REST APIs and HTTP.  It is meant to be somewhat forgiving and flexible, and geared towards readability and documentation.
@@ -161,6 +177,7 @@ Restlang is driven off newlines and symbols, with a couple keywords thrown in.  
 This is the complete reference of symbols.  Any line beginning with one of these symbols is treated as specified:
 
 -
+
 #### ```/``` (slash resource)
 
 The slash is used to define a top-level REST resource.  In our above ToDo example, the resource is defined as ```/todo```.  This means what it sounds like - that a server is expected to serve a resource via HTTP at /todo
@@ -218,6 +235,18 @@ When a POST or PUT is sent, the file param is sent as a form attachment with the
 #### ```|``` (pipe output)
 
 Pipe output denotes the outgoing response data.
+
+-
+
+#### ```>``` (receiver)
+
+The greater-than is used to define a top-level Websocket Receiver.  In our above chat example, the receiver is defined as ```>chat```.  This means what it sounds like - that a server is expected to receive a chat event via Websockets at "chat"
+
+-
+
+#### ```<``` (emitter)
+
+The less-than is used to define a top-level Websocket Emitter.  In our above chat example, the emitter is defined as ```<chat```.  This means what it sounds like - that a server is expected to emit a chat event via Websockets as "chat"
 
 -
 

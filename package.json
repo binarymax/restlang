@@ -23,6 +23,7 @@
     "DSL",
     "REST",
     "API",
+    "websockets",
     "markdown",
     "parser"
   ],
