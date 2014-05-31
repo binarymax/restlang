@@ -1,15 +1,13 @@
 /nested
+This API returns a nested response object.
+It only supports GET.
 
-This API returns a nested response object
+	#Get: This method returns the nested response.
 
-There is only one method: GET.  Any other method wont get a response.
+	?count		int default 50: The number of items to retrieve
 
-	#Get
-
-		This method returns the nested response object.
-
-		|list		array:		The array for the nested object
-		||item		object:		An object
-		|||id		int64:		The id of the item
-		|||name		string:		The name of the item
-		|||date		date:		The date of the item
+	|list			array:		The array for the nested object
+	||item		object:		An object
+	|||id		int:			The id of the item
+	|||name	string:		The name of the item
+	|||date	date:		The date of the item
