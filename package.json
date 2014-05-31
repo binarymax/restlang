@@ -1,6 +1,6 @@
 {
   "name": "restlang",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A markdown inspired language to describe web APIs",
   "main": "restlang.js",
   "directories": {
