@@ -117,21 +117,28 @@ describe('Restlang Parser',function(){
 
 	it('should parse the helloworld example',function(){
 
-		var source = fs.readFileSync('./examples/helloworld.rest','utf8');
+		var source = fs.readFileSync('./examples/helloworld.api','utf8');
 		var helloworld = restlang(source);
 		helloworld.should.be.an.object;
 	});
 
 	it('should parse the todo example',function(){
 
-		var source = fs.readFileSync('./examples/todo.rest','utf8');
+		var source = fs.readFileSync('./examples/todo.api','utf8');
 		var todo = restlang(source);
 		todo.should.be.an.object;
 	});
 
 	it('should parse the nested example',function(){
 
-		var source = fs.readFileSync('./examples/nested.rest','utf8');
+		var source = fs.readFileSync('./examples/nested.api','utf8');
+		var nested = restlang(source);
+		nested.should.be.an.object;
+	});
+
+	it('should parse the websocket chat example',function(){
+
+		var source = fs.readFileSync('./examples/chat.api','utf8');
 		var nested = restlang(source);
 		nested.should.be.an.object;
 	});

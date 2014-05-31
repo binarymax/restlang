@@ -1,0 +1,9 @@
+>chat
+	This websocket method accepts a chat message from the client.
+
+	@message string:The text that holds the chat message
+
+<chat
+	This websocket method broadcasts a chat message to the client.
+
+	|message string:The text that holds the chat message

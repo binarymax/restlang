@@ -34,12 +34,15 @@ var restlang = (function() {
 	];
 
 	var rxStringN = /string(\d)+/i;
+	var reWord = /(\w+)/i;
 
 	var reSymbols = {
 		'/': /^([\/]+)/,
 		'?': /^([\?]+)/,
 		'@': /^([\@]+)/,
-		'|': /^([\|]+)/
+		'|': /^([\|]+)/,
+		'>': /^([\>]+)/,
+		'<': /^([\<]+)/
 	};
 
 
@@ -87,7 +90,9 @@ var restlang = (function() {
 			'$': 'file',
 			'{': 'command',
 			'.': 'property',
-			'|': 'response'
+			'|': 'response',
+			'>': 'receiver',
+			'<': 'emitter'
 		};
 
 		var requirable = ['param','query','body','file'];
@@ -256,16 +261,34 @@ var restlang = (function() {
 			return stack[0].obj;
 		};
 
+		var specifiers = {};
+
 		//Adds a new API resource
-		var resource = function(tokens) {
+		var resource = specifiers.resource = function(tokens) {
 			var obj = {name:tokens.name,resource:{}};
 			if(tokens.description) obj.description = tokens.description;
 			api.push(obj);
 			stack = [{type:'resource',obj:obj}];
 		};
 
+		//Adds a new Websocket API Receiver
+		var receiver = specifiers.receiver = function(tokens) {
+			var obj = {name:tokens.name,receiver:{}};
+			if(tokens.description) obj.description = tokens.description;
+			api.push(obj);
+			stack = [{type:'receiver',obj:obj}];
+		};
+
+		//Adds a new Websocket API Emitter
+		var emitter = specifiers.emitter = function(tokens) {
+			var obj = {name:tokens.name,emitter:{}};
+			if(tokens.description) obj.description = tokens.description;
+			api.push(obj);
+			stack = [{type:'emitter',obj:obj}];
+		};
+
 		//Adds a new resource method
-		var method = function(tokens) {
+		var method = specifiers.method = function(tokens) {
 			var curr = popto('resource',"The method '"+tokens.name+"' does not apply to a resource.");
 			var name = tokens.name;
 			var obj = curr.resource[name];
@@ -277,7 +300,7 @@ var restlang = (function() {
 		};
 
 		//Identity property, acts as a 'Primary Key' of an entry
-		var identity = function(tokens){
+		var identity = specifiers.identity = function(tokens){
 			var curr = popto(['method','resource'],"The identity '"+tokens.name+"' does not apply to a method or resource.");
 			curr.identity = curr.identity||[];
 			var id = { name:tokens.name };
@@ -289,7 +312,7 @@ var restlang = (function() {
 		};
 
 		//Parent property, acts as a 'Foreign key' of an entry
-		var parent = function(tokens) {
+		var parent = specifiers.parent = function(tokens) {
 			var curr = popto('method');
 			curr = curr||popto('resource',"The parent '"+line+"' does not apply to a method or resource.");
 			if(tokens.length===0) error("A parent resource is missing for '"+line+"'");
@@ -306,7 +329,7 @@ var restlang = (function() {
 		};
 
 		//Mutable property, marks that the entity state will change when method is called
-		var mutable = function(tokens) {
+		var mutable = specifiers.mutable = function(tokens) {
 			var curr = popto('method');
 			curr = curr||popto('resource',"The mutable '"+line+"' does not apply to a method or resource.");
 			curr.mutable = {ismutable:true};
@@ -315,7 +338,7 @@ var restlang = (function() {
 		};
 
 		//Authentication property, denotes security access level required for the method
-		var authentication = function(tokens){
+		var authentication = specifiers.authentication = function(tokens){
 			var curr = popto('method');
 			curr = curr||popto('resource',"The authentication '"+line+"' does not apply to a method or resource.");
 			curr.authentication = {level:tokens.level};
@@ -324,7 +347,7 @@ var restlang = (function() {
 		};
 
 		//Adds a new method or resource property
-		var property = function(tokens) {
+		var property = specifiers.property = function(tokens) {
 			var keyword = tokens.name;
 			var obj = null;
 			switch (keyword) {
@@ -339,19 +362,19 @@ var restlang = (function() {
 		};
 
 		//Adds an external command reference
-		var command = function(tokens) {
+		var command = specifiers.command = function(tokens) {
 			var curr = popto('method',"The command '"+tokens.name+"' does not apply to a method.");
 			curr.command = trim(line).replace(/^\{/,'').replace(/\}$/,'');
 		};
 
 		//Adds description text to current stack object
-		var description = function(tokens) {
+		var description = specifiers.description = function(tokens) {
 			var curr = stack[0].obj;
 			curr.description = curr.description ? (curr.description+' '+tokens.name) : tokens.name;
 		};
 
 		//Composes a function to add a type of method request or response parameter
-		var parameter = function(key,errormessage) {
+		var parameter = function(key,parents,errormessage) {
 			//Adds a method parameter item
 			return function(tokens) {
 
@@ -362,7 +385,7 @@ var restlang = (function() {
 				if(tokens.nested) {
 					curr = popto(key,errormessage.replace('%s',tokens.name));
 				} else {
-					curr = popto('method',errormessage.replace('%s',tokens.name));
+					curr = popto(parents,errormessage.replace('%s',tokens.name));
 				}
 
 				curr[key] = curr[key]||{};
@@ -378,13 +401,13 @@ var restlang = (function() {
 		};
 
 		//Declare method request parameter functions
-		var param = parameter('params',"The route parameter '%s' does not apply to a method.");
-		var query = parameter('query',"The querystring parameter '%s' does not apply to a method.");
-		var body = parameter('body',"The body parameter '%s' does not apply to a method.");
-		var file = parameter('files',"The file attachment '%s' does not apply to a method.");
+		var param = specifiers.param = parameter('params','method',"The route parameter '%s' does not apply to a method.");
+		var query = specifiers.query = parameter('query','method',"The querystring parameter '%s' does not apply to a method.");
+		var body = specifiers.body = parameter('body',['method','receiver'],"The body parameter '%s' does not apply to a method or receiver.");
+		var file = specifiers.file = parameter('files','method',"The file attachment '%s' does not apply to a method.");
 
 		//Declare method response parameter functions
-		var response = parameter('response',"The response field '%s' does not apply to a method or parent response object.");
+		var response = specifiers.response = parameter('response',['method','emitter'],"The response field '%s' does not apply to a method, emitter, or parent response object.");
 
 		//Loop through all the lines and parse the source
 		for(i=0,l=lines.length;i<l;i++) {
@@ -394,19 +417,12 @@ var restlang = (function() {
 			tokens = tokenize(line);
 
 			if (tokens.error) error(tokens.error,i,line);
+			if (!reWord.test(tokens.name)) error("The name can only contain letters or numbers",i,line);
 
-			switch(tokens.type) {
-				case 'resource': resource(tokens); break;
-				case 'method': method(tokens); break;
-				case 'param': param(tokens); break;
-				case 'query': query(tokens); break;
-				case 'body': body(tokens); break;
-				case 'file': file(tokens); break;
-				case 'command': command(tokens); break;
-				case 'property': property(tokens); break;
-				case 'response': response(tokens); break;
-				case 'description': description(tokens); break;
-				default: description(tokens); break;
+			if (specifiers[tokens.type]) {
+				specifiers[tokens.type](tokens);
+			} else {
+				description(tokens);
 			}
 
 		}
