@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Restlang : A markdown inspired language to describe web APIs" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Restlang</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/binarymax/restlang">View on GitHub</a>
+
+          <h1 id="project_title">Restlang</h1>
+          <h2 id="project_tagline">A markdown inspired language to describe web APIs</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/binarymax/restlang/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/binarymax/restlang/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><img src="https://raw.githubusercontent.com/binarymax/restlang/master/media/logo.png"></p>
+
+<p>A cross-compiling DSL (domain specific language) for building APIs</p>
+
+<h2>
+<a name="hello-world" class="anchor" href="#hello-world"><span class="octicon octicon-link"></span></a>Hello World</h2>
+
+<pre lang="restlang"><code>/helloworld
+
+This API returns a 'Hello World' message!
+
+#Get
+
+    {/controllers/helloworld.Get}
+
+    |message string: The text that holds the message
+
+</code></pre>
+
+<h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>Restlang is a markdown-inspired language that is used to generate server route specifications, client libraries, testing scripts, and developer documentation for web based APIs.</p>
+
+<p>Restlang defines the 'What' and not the 'How' of APIs. </p>
+
+<p>For example, you can easily define a Todo list API resource with 50 lines of restlang, and then automatically generate all of the following:</p>
+
+<ul>
+<li>The API routes for Node/Express </li>
+<li>A jQuery AJAX library to consume the above API</li>
+<li>Integration test scrips for mocha</li>
+<li>Static HTML documentation files</li>
+</ul><p>The main idea being when an end language target is written, then the end language target works for all APIs defined with Restlang.  Similar to how a markdown parser can target HTML or PDF - once the target is defined it works for all text written in markdown.</p>
+
+<p>As of writing, only one parser exists and is in development.  This repository holds the restlang.js parser for Node and JavaScript.</p>
+
+<h3>
+<a name="targets" class="anchor" href="#targets"><span class="octicon octicon-link"></span></a>Targets</h3>
+
+<p>A Target is an end result output of the Restlang parser coupled with a generator.  Currently only one target generator is supported through Edda [1].</p>
+
+<h4>
+<a name="framework-targets" class="anchor" href="#framework-targets"><span class="octicon octicon-link"></span></a><em>Framework targets</em>
+</h4>
+
+<p>Currently, only node is supported as a target through Heimdall[2].  Though Heimdall is semi-mature and in production use, support for Restlang-&gt;Heimdall is experimental.</p>
+
+<p>Future server framework targets in planning are:</p>
+
+<ul>
+<li>Golang</li>
+<li>PHP</li>
+<li>Openresty</li>
+<li>MVC.NET</li>
+</ul><h4>
+<a name="client-targets" class="anchor" href="#client-targets"><span class="octicon octicon-link"></span></a><em>Client targets</em>
+</h4>
+
+<p>A nice side effect of having a full parseable API definition, is that client libraries can be generated.  For now, a tool called Bifrost [3] is in development to generate such frameworks, but is not yet ready.</p>
+
+<p>Future client targets in planning are:</p>
+
+<ul>
+<li>iOs</li>
+<li>Android</li>
+<li>jQuery</li>
+<li>Node</li>
+<li>Golang</li>
+<li>.NET</li>
+</ul><h4>
+<a name="testing-targets" class="anchor" href="#testing-targets"><span class="octicon octicon-link"></span></a><em>Testing targets</em>
+</h4>
+
+<p>Automation of Integration Testing is a key goal of Restlang.  Currently only node/mocha is being developed.  See Ragnarok for more information [4]. </p>
+
+<p>Aside from Ragnarok there are no other Testing targets planned.</p>
+
+<h4>
+<a name="documentation-for-humans-target" class="anchor" href="#documentation-for-humans-target"><span class="octicon octicon-link"></span></a><em>Documentation for Humans target</em>
+</h4>
+
+<p>Though  mostly human readable in its raw form (again like markdown), a developer documentation target is in the works to generate static documentation HTML.</p>
+
+<h2>
+<a name="todo-example" class="anchor" href="#todo-example"><span class="octicon octicon-link"></span></a>Todo Example</h2>
+
+<p>Here is an example of a Todo list API in Restlang:</p>
+
+<pre lang="restlang"><code>/todo: A Todo list CRUD API
+
+.identity id int64
+
+#Get: Gets a specific To-Do Item
+
+    {../controllers/todo:Entry}
+
+    :id int64 required: The ID of the item entry to retrieve
+
+    |id int64: The ID of the item
+    |description string: The textual description of the item
+    |donedate datetime: The date/time when the item was marked as done, null otherwise
+    |createdate datetime: The date the item was entered into the system
+    |isdeleted boolean: True if the item has been removed from the list
+
+#Get: Gets a list of Todo Items for a List
+
+    {../controllers/todo:Collection}
+
+    ?isdone boolean: If true, only return done items, if false only return not done items
+    ?all boolean default false: if true, return all items, done or not
+
+    |id int64: The ID of the item
+    |description string: The textual description of the item
+    |donedate datetime: The date/time when the item was marked as done, null otherwise
+    |createdate datetime: The date the item was entered into the system
+    |isdeleted boolean: True if the item has been removed from the list
+
+#Post: Adds a new Todo Item to a List
+
+    {../controllers/todo:Add}
+
+    @description string required: The textual description of the item
+    @donedate datetime: The date/time when the item was marked as done, null otherwise
+    @createdate datetime: The date the item was entered into the system
+    @redirect string: Redirect to this URL after Add
+
+    |id int64: The ID of the newly added item
+    |description string: The textual description of the item
+    |donedate datetime: The date/time when the item was marked as done, null otherwise
+    |createdate datetime: The date the item was entered into the system
+
+#Put: Saves a specific Todo Item
+
+    {../controllers/todo:Save}
+
+    :id int64 required: The ID of the item entry to save
+
+    @description string: The textual description of the item
+    @donedate datetime: The date/time when the item was marked as done, null otherwise
+    @createdate datetime: The date the item was entered into the system
+    @redirect string: Redirect to this URL after Save               
+
+    |id int64: The ID of the saved Todo item
+    |description string: The textual description of the item
+    |donedate datetime: The date/time when the item was marked as done, null otherwise
+    |createdate datetime: The date the item was entered into the system
+
+#Delete: Marks a specific Todo Item as deleted
+
+    {../controllers/todo:Remove}
+
+    :id int64 required: The ID of the item entry to remove
+
+    |affectedRows: int32: The number of records effected by the removal
+
+</code></pre>
+
+<h2>
+<a name="websockets" class="anchor" href="#websockets"><span class="octicon octicon-link"></span></a>Websockets</h2>
+
+<p>Restlang also supports websocket receiver and emitter definitions.  Here is an example of a chat websocket API:</p>
+
+<pre><code>&gt;chat
+    This websocket method accepts a chat message from the client.
+
+    @message string:The text that holds the chat message
+
+&lt;chat
+    This websocket method broadcasts a chat message to the client.
+
+    |message string:The text that holds the chat message
+</code></pre>
+
+<h2>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p>Writing restlang is easy, but it assumes you have at least a basic understanding of REST APIs and HTTP.  It is meant to be somewhat forgiving and flexible, and geared towards readability and documentation.</p>
+
+<p>Restlang works by allowing you to declare resources, methods, request parameters, and response output in a human-readable format.  Restlang does not compile to machine language or bytecode - rather it is parsed into an intermediate JSON, and then the JSON can be used to generate any number of targets.</p>
+
+<h3>
+<a name="top-down-flow" class="anchor" href="#top-down-flow"><span class="octicon octicon-link"></span></a>Top-down flow</h3>
+
+<p>Restlang is parsed in a top-down flow.  When an entity is declared, it applies to the previous entity the next level up.  For example, a resource has methods, and methods have parameters.  When a method is declared, it applies to the most recently declared resource.  When a parameter is declared, it applies to the most recently declared method.</p>
+
+<p>Restlang is driven off newlines and symbols, with a couple keywords thrown in.  A line that begins with one of the key symbols (defined below) is treated as the specified entity.  A line that begins with anything other than a symbol is treated as textual description for the most recently defined entity.</p>
+
+<h3>
+<a name="symbol-reference" class="anchor" href="#symbol-reference"><span class="octicon octicon-link"></span></a>Symbol Reference</h3>
+
+<p>This is the complete reference of symbols.  Any line beginning with one of these symbols is treated as specified:</p>
+
+<h2></h2>
+
+<h4>
+<a name="-slash-resource" class="anchor" href="#-slash-resource"><span class="octicon octicon-link"></span></a>
+<code>/</code> (slash resource)</h4>
+
+<p>The slash is used to define a top-level REST resource.  In our above ToDo example, the resource is defined as <code>/todo</code>.  This means what it sounds like - that a server is expected to serve a resource via HTTP at /todo</p>
+
+<h2></h2>
+
+<h4>
+<a name="-hash-method" class="anchor" href="#-hash-method"><span class="octicon octicon-link"></span></a>
+<code>#</code> (hash method)</h4>
+
+<p>Defines an HTTP Resource access method.  You can either supply a verb (GET, POST, PUT, DELETE), or one of the Restlang methods (Entry, Collection, Add, Save, Remove).  More on the Restlang specific methods will be discussed later.</p>
+
+<h2></h2>
+
+<h4>
+<a name="-dot-property" class="anchor" href="#-dot-property"><span class="octicon octicon-link"></span></a>
+<code>.</code> (dot property)</h4>
+
+<p>This symbol is context specific.  A dot property can only apply to a resource or method, and must be coupled with one of the following keywords:</p>
+
+<ul>
+<li>identity</li>
+<li>parent</li>
+<li>authentication</li>
+<li>mutable</li>
+</ul><h2></h2>
+
+<h4>
+<a name="-curly-controller" class="anchor" href="#-curly-controller"><span class="octicon octicon-link"></span></a>
+<code>{</code> (curly controller)</h4>
+
+<p>The curly is used as a reference point to an external and implementation specific controller to handle the resource.  Since Restlang is only used to define the API details, it is left to the target framework or language to implement how the request is fulfilled.  This is usually only used when generating the source code files for the server implementation.</p>
+
+<p><em>Note</em>: While not required, it is good format to end the line with a closing curly brace <code>}</code></p>
+
+<h2></h2>
+
+<h4>
+<a name="-route-param" class="anchor" href="#-route-param"><span class="octicon octicon-link"></span></a>
+<code>:</code> (route param)</h4>
+
+<p>The colon param is used as a route parameter.  For example, the <code>:id int64 required</code> param for the <code>/todo</code> GET resource, will serve a route that a client can GET at <code>/todo/:id/</code></p>
+
+<h2></h2>
+
+<h4>
+<a name="-query-param" class="anchor" href="#-query-param"><span class="octicon octicon-link"></span></a>
+<code>?</code> (query param)</h4>
+
+<p>The query param is used as a querystring parameter.  For example, the <code>?isdone boolean</code> param for the <code>/todo</code> GET resource, will serve a route that a client can GET at <code>/todo/?isdone=true</code></p>
+
+<h2></h2>
+
+<h4>
+<a name="-body-param" class="anchor" href="#-body-param"><span class="octicon octicon-link"></span></a>
+<code>@</code> (body param)</h4>
+
+<p>When a POST or PUT is sent, the body param is sent with the body of the request.</p>
+
+<h2></h2>
+
+<h4>
+<a name="-file-param" class="anchor" href="#-file-param"><span class="octicon octicon-link"></span></a>
+<code>$</code> (file param)</h4>
+
+<p>When a POST or PUT is sent, the file param is sent as a form attachment with the body of the request.</p>
+
+<h2></h2>
+
+<h4>
+<a name="-pipe-output" class="anchor" href="#-pipe-output"><span class="octicon octicon-link"></span></a>
+<code>|</code> (pipe output)</h4>
+
+<p>Pipe output denotes the outgoing response data.</p>
+
+<h2></h2>
+
+<h4>
+<a name="-receiver" class="anchor" href="#-receiver"><span class="octicon octicon-link"></span></a>
+<code>&gt;</code> (receiver)</h4>
+
+<p>The greater-than is used to define a top-level Websocket Receiver.  In our above chat example, the receiver is defined as <code>&gt;chat</code>.  This means what it sounds like - that a server is expected to receive a chat event via Websockets at "chat"</p>
+
+<h2></h2>
+
+<h4>
+<a name="-emitter" class="anchor" href="#-emitter"><span class="octicon octicon-link"></span></a>
+<code>&lt;</code> (emitter)</h4>
+
+<p>The less-than is used to define a top-level Websocket Emitter.  In our above chat example, the emitter is defined as <code>&lt;chat</code>.  This means what it sounds like - that a server is expected to emit a chat event via Websockets as "chat"</p>
+
+<h2></h2>
+
+<h3>
+<a name="parameter-declarations" class="anchor" href="#parameter-declarations"><span class="octicon octicon-link"></span></a>Parameter declarations</h3>
+
+<p>The route, query, body, file, and pipe parameters all have the same format:
+<code>&lt;symbol&gt;&lt;name&gt; &lt;datatype&gt; [required][default &lt;value&gt;]</code></p>
+
+<p>The symbol is one of the symbols above</p>
+
+<p>The datatype is one of the datatypes below</p>
+
+<p>The name is a variable type format: /[a-z]\w*/i</p>
+
+<p>required and default cannot both be declared.  required overrides default.</p>
+
+<ul>
+<li>
+<p>The <code>id</code> example from Todo Get:</p>
+
+<p><code>:id int64 required</code></p>
+</li>
+<li>
+<p>The <code>isdone</code> example from Todo Get:</p>
+
+<p><code>?isdone boolean</code></p>
+</li>
+<li>
+<p>The <code>all</code> example from Todo Get:</p>
+
+<p><code>?all boolean default false</code></p>
+</li>
+</ul><h2>
+<a name="datatypes" class="anchor" href="#datatypes"><span class="octicon octicon-link"></span></a>Datatypes</h2>
+
+<p>The datatype system is meant to be extensible, but supports the following defaults:</p>
+
+<ul>
+<li>binary</li>
+<li>boolean</li>
+<li>byte</li>
+<li>datetime</li>
+<li>decimal</li>
+<li>double</li>
+<li>single</li>
+<li>float (same as double)</li>
+<li>guid</li>
+<li>int16</li>
+<li>int32</li>
+<li>int64</li>
+<li>int (same as int32)</li>
+<li>number (same as int32)</li>
+<li>sbyte</li>
+<li>string</li>
+<li>text (same as string)</li>
+<li>stringN (where N is any integer greater than 0.  For example <code>string255</code>)</li>
+<li>time</li>
+<li>datetimeoffset</li>
+</ul><h3>
+<a name="custom-datatypes" class="anchor" href="#custom-datatypes"><span class="octicon octicon-link"></span></a>Custom datatypes</h3>
+
+<p>It is possible to extend the type system and define new datatypes to use in the API.</p>
+
+<p><em>coming soon</em>  </p>
+
+<h2>
+<a name="notes" class="anchor" href="#notes"><span class="octicon octicon-link"></span></a>Notes</h2>
+
+<ul>
+<li>[1] Edda can be found at <a href="https://github.com/binarymax/edda">https://github.com/binarymax/edda</a>
+</li>
+<li>[2] Heimdall can be found at <a href="https://github.com/binarymax/heimdall">https://github.com/binarymax/heimdall</a>
+</li>
+<li>[3] Bifrost can be found at <a href="https://github.com/binarymax/bifrost">https://github.com/binarymax/bifrost</a>
+</li>
+<li>[4] Ragnarok can be found at <a href="https://github.com/binarymax/ragnarok">https://github.com/binarymax/ragnarok</a>
+</li>
+</ul><p>Restlang is released under the MIT license.
+Copyright Max Irwin, 2014</p>
+
+<h5>
+<a name="made-with-love-by-max-irwin-httpbinarymaxcom" class="anchor" href="#made-with-love-by-max-irwin-httpbinarymaxcom"><span class="octicon octicon-link"></span></a><em>made with love by Max Irwin (<a href="http://binarymax.com">http://binarymax.com</a>)</em>
+</h5>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Restlang maintained by <a href="https://github.com/binarymax">binarymax</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-22107593-10");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
