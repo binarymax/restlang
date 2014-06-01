@@ -1,4 +1,4 @@
-# Restlang
+<img src="https://raw.githubusercontent.com/binarymax/restlang/master/media/logo.png"> 
 
 A cross-compiling DSL (domain specific language) for building APIs
 
