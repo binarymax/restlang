@@ -17,7 +17,6 @@ This API returns a 'Hello World' message!
 	
 ```
 
-
 ## Introduction
 
 Restlang is a markdown-inspired language that is used to generate server route specifications, client libraries, testing scripts, and developer documentation for web based APIs.
@@ -33,6 +32,15 @@ For example, you can easily define a Todo list API resource with 50 lines of res
 The main idea being when an end language target is written, then the end language target works for all APIs defined with Restlang.  Similar to how a markdown parser can target HTML or PDF - once the target is defined it works for all text written in markdown.
 
 As of writing, only one parser exists and is in development.  This repository holds the restlang.js parser for Node and JavaScript.
+
+## Installation
+
+```
+npm install restlang
+```
+
+Restlang is currently used in the fullstack generation tool called Realms (https://github.com/binarymax/realms).  It is recommended you read the below documentation before getting started with Realms.
+
 
 ### Targets
 
