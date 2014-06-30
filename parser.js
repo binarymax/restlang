@@ -33,6 +33,59 @@ var restlang = (function() {
 		'array'
 	];
 
+	var verbs = [
+		'OPTIONS',
+		'GET',
+		'HEAD',
+		'POST',
+		'PUT',
+		'DELETE',
+		'TRACE',
+		'CONNECT',
+
+		//WebDAV
+		'PROPFIND',
+		'PROPPATCH',
+		'MKCOL',
+		'COPY',
+		'MOVE',
+		'LOCK',
+		'UNLOCK',
+		'VERSION-CONTROL',
+		'REPORT',
+		'CHECKOUT',
+		'CHECKIN',
+		'UNCHECKOUT',
+		'MKWORKSPACE',
+		'UPDATE',
+		'LABEL',
+		'MERGE',
+		'BASELINE-CONTROL',
+		'MKACTIVITY',
+		'ORDERPATCH',
+		'ACL',
+		'PATCH',
+		'SEARCH',
+		'BCOPY',
+		'BDELETE',
+		'BMOVE',
+		'BPROPFIND',
+		'BPROPPATCH',
+		'NOTIFY',
+		'POLL',
+		'SUBSCRIBE',
+		'UNSUBSCRIBE',
+		'X-MS-ENUMATTS'
+	];
+
+	var verbmap = {
+		'ENTRY':'GET',
+		'COLLECTION':'GET',
+		'ADD':'POST',
+		'SAVE':'PUT',
+		'REMOVE':'DELETE'		
+	};
+
 	var rxStringN = /string(\d)+/i;
 	var reWord = /(\w+)/i;
 
@@ -150,6 +203,7 @@ var restlang = (function() {
 		var token = '';
 		var setting = null;
 		var setable = null;
+		var verb = null;
 		while (!done) {
 
 			//Next character in line
@@ -172,6 +226,17 @@ var restlang = (function() {
 					//Token is the first thing following the symbol
 					tokens.name = token;
 					named = true;
+
+					if (tokens.type==='method') {
+						verb = tokens.name.toUpperCase();
+						if (verbs.indexOf(verb)>-1) {
+							tokens.verb = verb;
+						} else if (verbmap[verb]) {
+							tokens.verb = verbmap[verb];
+						} else {
+							tokens.error = "The HTTP verb '" + tokens.name + "' is invalid.";
+						}
+					}
 
 				} else if (keywords[token]) {
 					//Token is a keyword
@@ -295,6 +360,7 @@ var restlang = (function() {
 			if(!obj) obj = curr.resource[name] = {};
 			obj.name  = name;
 			obj.path = curr.resource.path;
+			obj.verb = tokens.verb;
 			if(tokens.description) obj.description = tokens.description;
 
 			stack.unshift({type:'method',obj:obj});
