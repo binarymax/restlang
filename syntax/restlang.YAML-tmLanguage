@@ -1,1 +1,30 @@
-/Users/max/Library/Application Support/Sublime Text 2/Packages/User/restlang.YAML-tmLanguage
+# [PackageDev] target_format: plist, ext: tmLanguage
+name: Restlang
+scopeName: source.api
+fileTypes: [api]
+uuid: 65ef4994-0b27-4e4d-ad4e-0fb0a1c80852
+
+patterns:
+- name: constant.character
+  match: ^\s*([\/][a-zA-Z][a-zA-Z0-9_]*)
+
+- name: entity.name.class
+  match: ^\s*([\#][a-zA-Z][a-zA-Z0-9_]*)
+
+- name: variable.parameter
+  match: ^\s*([\?\@\$\:][a-zA-Z][a-zA-Z0-9_]*)
+
+- name: variable.parameter
+  match: ^\s*([\|]+[a-zA-Z][a-zA-Z0-9_]*)
+
+- name: keyword
+  match: ^\s*(\{[^\}]*\})
+
+- name: string
+  match: \s+(binary|boolean|byte|datetime|decimal|double|single|float|guid|int16|int32|int64|int|number|sbyte|string|text|date|time|datetimeoffset|object|array)
+
+- name: comment
+  match: (\:.*$)
+
+- name: comment
+  match: ^\s*(\w.*$)
