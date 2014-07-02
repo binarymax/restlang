@@ -89,13 +89,18 @@ var restlang = (function() {
 	var rxStringN = /string(\d)+/i;
 	var reWord = /(\w+)/i;
 
-	var reSymbols = {
-		'/': /^([\/]+)/,
-		'?': /^([\?]+)/,
-		'@': /^([\@]+)/,
-		'|': /^([\|]+)/,
-		'>': /^([\>]+)/,
-		'<': /^([\<]+)/
+	var symbols = {
+		'/': {name:'resource',expr:/^([\/]+)/},
+		'#': {name:'method',expr:/^([\#]+)/},
+		':': {name:'param',expr:/^([\:]+)/},
+		'?': {name:'query',expr:/^([\?]+)/},
+		'@': {name:'body',expr:/^([\@]+)/},
+		'$': {name:'file',expr:/^([\$]+)/},
+		'{': {name:'command',expr:/^([\{]+)/},
+		'.': {name:'property',expr:/^([\.]+)/},
+		'|': {name:'response',expr:/^([\|]+)/},
+		'>': {name:'receiver',expr:/^([\>]+)/},
+		'<': {name:'emitter',expr:/^([\<]+)/}
 	};
 
 
@@ -134,19 +139,6 @@ var restlang = (function() {
 		var idx = 0;
 		var len = line.length||0;
 		var chr = '';
-		var types = {
-			'/': 'resource',
-			'#': 'method',
-			':': 'param',
-			'?': 'query',
-			'@': 'body',
-			'$': 'file',
-			'{': 'command',
-			'.': 'property',
-			'|': 'response',
-			'>': 'receiver',
-			'<': 'emitter'
-		};
 
 		var requirable = ['param','query','body','file'];
 		var typeable = ['param','query','body','response'];
@@ -170,7 +162,7 @@ var restlang = (function() {
 			//Get Symbol and line type
 			chr = line.charAt(0);
 			tokens.symbol = chr;
-			tokens.type = types[chr];	
+			tokens.type = symbols[chr]&&symbols[chr].name;
 		}
 
 		if(!tokens.type) {
@@ -183,12 +175,12 @@ var restlang = (function() {
 
 		if (nestable.indexOf(tokens.type)>-1) {
 			//Check for multiple symbols
-			if (!reSymbols[chr]) {
+			if (!symbols[chr]) {
 				//Construct repeating symbols regex
-				reSymbols[chr] = new RegExp('^([\\' + chr + ']+)');
+				symbols[chr] = {name:"nested"+chr,expr:new RegExp('^([\\' + chr + ']+)')};
 			}
 
-			var nested = reSymbols[chr].exec(line);
+			var nested = symbols[chr].expr.exec(line);
 			if (nested && nested.length && nested[0].length>1) {
 				tokens.nested = nested[0].length;
 				line = line.substr(tokens.nested-1);
@@ -237,6 +229,10 @@ var restlang = (function() {
 							tokens.error = "The HTTP verb '" + tokens.name + "' is invalid.";
 						}
 					}
+
+				} else if (identity.indexOf(tokens.name)>-1) {
+					//Token belongs to an identity
+					tokens.identity = token;
 
 				} else if (keywords[token]) {
 					//Token is a keyword
@@ -330,7 +326,7 @@ var restlang = (function() {
 
 		//Adds a new API resource
 		var resource = specifiers.resource = function(tokens) {
-			var obj = {name:tokens.name,type:'resource',resource:{path:'/'+tokens.name}};
+			var obj = {name:tokens.name,type:'resource',path:'/'+tokens.name,methods:[]};
 			if(tokens.description) obj.description = tokens.description;
 			api.push(obj);
 			stack = [{type:'resource',obj:obj}];
@@ -356,12 +352,12 @@ var restlang = (function() {
 		var method = specifiers.method = function(tokens) {
 			var curr = popto('resource',"The method '"+tokens.name+"' does not apply to a resource.");
 			var name = tokens.name;
-			var obj = curr.resource[name];
-			if(!obj) obj = curr.resource[name] = {};
+			var obj = {};
 			obj.name  = name;
-			obj.path = curr.resource.path;
+			obj.path = curr.path;
 			obj.verb = tokens.verb;
 			if(tokens.description) obj.description = tokens.description;
+			curr.methods.push(obj);
 
 			stack.unshift({type:'method',obj:obj});
 		};
@@ -370,7 +366,7 @@ var restlang = (function() {
 		var identity = specifiers.identity = function(tokens){
 			var curr = popto(['method','resource'],"The identity '"+tokens.name+"' does not apply to a method or resource.");
 			curr.identity = curr.identity||[];
-			var id = { name:tokens.name };
+			var id = { name:tokens.identity };
 			curr.identity.push(id);
 
 			if(tokens.length) id.description = tokens.join(' ');
