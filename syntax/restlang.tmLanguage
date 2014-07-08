@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>api</string>
+	</array>
+	<key>name</key>
+	<string>Restlang</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>match</key>
+			<string>^\s*([\/][a-zA-Z][a-zA-Z0-9_]*)</string>
+			<key>name</key>
+			<string>constant.character</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>^\s*([\#][a-zA-Z][a-zA-Z0-9_]*)</string>
+			<key>name</key>
+			<string>entity.name.class</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>^\s*([\?\@\$\:][a-zA-Z_][a-zA-Z0-9_]*)</string>
+			<key>name</key>
+			<string>support.constant</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>^\s*([\|]+[a-zA-Z_][a-zA-Z0-9_]*)</string>
+			<key>name</key>
+			<string>variable.parameter</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>^\s*(\{[^\}]*\})</string>
+			<key>name</key>
+			<string>keyword</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\s+(binary|boolean|byte|datetime|decimal|double|single|float|guid|int16|int32|int64|int|number|sbyte|string|text|date|time|datetimeoffset|object|array)</string>
+			<key>name</key>
+			<string>string</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>(\:.*$)</string>
+			<key>name</key>
+			<string>comment</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>^\s*(\w.*$)</string>
+			<key>name</key>
+			<string>comment</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>source.api</string>
+	<key>uuid</key>
+	<string>65ef4994-0b27-4e4d-ad4e-0fb0a1c80852</string>
+</dict>
+</plist>
