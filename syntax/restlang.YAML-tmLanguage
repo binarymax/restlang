@@ -6,7 +6,7 @@ uuid: 65ef4994-0b27-4e4d-ad4e-0fb0a1c80852
 
 patterns:
 - name: constant.character
-  match: ^\s*([\/][a-zA-Z][a-zA-Z0-9_]*)
+  match: ^\s*([\/\>\<][a-zA-Z][a-zA-Z0-9_]*)
 
 - name: entity.name.class
   match: ^\s*([\#][a-zA-Z][a-zA-Z0-9_]*)
