@@ -39,6 +39,7 @@ var restlang = (function() {
 		'HEAD',
 		'POST',
 		'PUT',
+		'PATCH',
 		'DELETE',
 		'TRACE',
 		'CONNECT',
@@ -83,7 +84,7 @@ var restlang = (function() {
 		'COLLECTION':'GET',
 		'ADD':'POST',
 		'SAVE':'PUT',
-		'REMOVE':'DELETE'		
+		'REMOVE':'DELETE'
 	};
 
 	var rxStringN = /string(\d)+/i;
