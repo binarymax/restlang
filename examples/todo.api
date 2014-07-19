@@ -4,7 +4,7 @@
 
 #Entry: Gets a specific To-Do Item
 
-	{../controllers/todo:Entry}
+	{../controllers/todo#Entry}
 
 	:id int64 required: The ID of the item entry to retrieve
 
@@ -16,7 +16,7 @@
 
 #Collection: Gets a list of Todo Items
 
-	{../controllers/todo:Collection}
+	{../controllers/todo#Collection}
 
 	?isdone boolean: If true, only return done items, if false only return not done items
 	?all boolean: if true, return all items, done or not
@@ -31,7 +31,7 @@
 
 	.mutable
 
-	{../controllers/todo:Add}
+	{../controllers/todo#Add}
 
 	@description string required: The textual description of the item
 	@donedate datetime: The date/time when the item was marked as done, null otherwise
@@ -46,7 +46,7 @@
 
 	.mutable
 
-	{../controllers/todo:Save}
+	{../controllers/todo#Save}
 
 	:id int64 required: The ID of the item entry to save
 
@@ -63,7 +63,7 @@
 
 	.mutable
 
-	{../controllers/todo:Remove}
+	{../controllers/todo#Remove}
 
 	:id int64 required: The ID of the item entry to remove
 

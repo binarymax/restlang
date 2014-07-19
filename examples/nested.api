@@ -6,8 +6,8 @@ It only supports GET.
 
 	?count		int default 50: The number of items to retrieve
 
-	|list			array:		The array for the nested object
-	||item		object:		An object
-	|||id		int:			The id of the item
+	|list	array:		The array for the nested object
+	||item	object:		An object
+	|||id	int:		The id of the item
 	|||name	string:		The name of the item
 	|||date	date:		The date of the item
