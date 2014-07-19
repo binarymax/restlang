@@ -29,6 +29,7 @@ var pretty = function(obj) {
 var parse = function(source) {
 
 	var api = restlang(source);
+	api.__metadata = {version : package.version};
 
 	var out = command.pretty?pretty(api):JSON.stringify(api);
 
@@ -48,7 +49,7 @@ var parse = function(source) {
 
 // --------------------------------------------------------------------------
 // Read in the file and parse
-try{
+try {
 
 	fs.readFile(command.source,'utf8',function(err,source){
 		if(err) {
